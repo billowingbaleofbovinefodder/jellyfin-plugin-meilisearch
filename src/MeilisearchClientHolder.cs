@@ -133,7 +133,7 @@ public class MeilisearchClientHolder(ILogger<MeilisearchClientHolder> logger, IS
         return
         [
             await index.UpdateFilterableAttributesAsync(
-                ["type", "parentId", "isFolder"]
+                ["type", "parentId", "isFolder", "tags", "runTimeSeconds"]
             ),
             await index.UpdateSortableAttributesAsync(
                 ["communityRating", "criticRating"]

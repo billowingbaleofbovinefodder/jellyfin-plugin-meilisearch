@@ -59,7 +59,13 @@ public class MeilisearchSearchProvider : IExternalSearchProvider
             yield break;
         }
 
-        var filter = BuildFilter(query);
+        var parsedQuery = TagQueryParser.Parse(query.SearchTerm);
+        var filter = BuildFilter(
+            query,
+            parsedQuery.RequiredTags,
+            parsedQuery.ExcludedTags,
+            parsedQuery.MinimumDurationSeconds,
+            parsedQuery.MaximumDurationSeconds);
         var searchPeopleByName = Plugin.Instance?.Configuration.SearchPeopleByNameOnly ?? false;
         var attributesToSearchOn = searchPeopleByName ? ResolveAttributesToSearchOn(query) : null;
         var limit = query.Limit ?? 50;
@@ -69,7 +75,7 @@ public class MeilisearchSearchProvider : IExternalSearchProvider
         try
         {
             results = await SearchInternalAsync(
-                query.SearchTerm, limit, filter, attributesToSearchOn, matchingStrategy, cancellationToken)
+                parsedQuery.Text, limit, filter, attributesToSearchOn, matchingStrategy, cancellationToken)
                 .ConfigureAwait(false);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
@@ -176,7 +182,12 @@ public class MeilisearchSearchProvider : IExternalSearchProvider
         return results;
     }
 
-    private static string? BuildFilter(SearchProviderQuery query)
+    private static string? BuildFilter(
+        SearchProviderQuery query,
+        IReadOnlyList<string> requiredTags,
+        IReadOnlyList<string> excludedTags,
+        long? minimumDurationSeconds,
+        long? maximumDurationSeconds)
     {
         var parts = new List<string>();
 
@@ -206,6 +217,26 @@ public class MeilisearchSearchProvider : IExternalSearchProvider
             parts.Add($"parentId = \"{query.ParentId.Value}\"");
         }
 
+        foreach (var tag in requiredTags)
+        {
+            parts.Add($"tags = \"{EscapeFilterValue(tag)}\"");
+        }
+
+        foreach (var tag in excludedTags)
+        {
+            parts.Add($"NOT tags = \"{EscapeFilterValue(tag)}\"");
+        }
+
+        if (minimumDurationSeconds.HasValue)
+        {
+            parts.Add($"runTimeSeconds >= {minimumDurationSeconds.Value}");
+        }
+
+        if (maximumDurationSeconds.HasValue)
+        {
+            parts.Add($"runTimeSeconds <= {maximumDurationSeconds.Value}");
+        }
+
         return parts.Count == 0 ? null : string.Join(" AND ", parts);
     }
 
@@ -213,6 +244,11 @@ public class MeilisearchSearchProvider : IExternalSearchProvider
     /// Restricts a search for people alone to the name fields. A person's overview is their biography, so searching it
     /// matches anyone whose biography contains the term ("one of seven children") instead of people with that name.
     /// </summary>
+    private static string EscapeFilterValue(string value)
+        => value
+            .Replace("\\", "\\\\", StringComparison.Ordinal)
+            .Replace("\"", "\\\"", StringComparison.Ordinal);
+
     private static string[]? ResolveAttributesToSearchOn(SearchProviderQuery query)
     {
         var types = ResolveTypes(query);

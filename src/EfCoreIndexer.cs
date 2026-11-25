@@ -52,7 +52,10 @@ public class EfCoreIndexer(
             CriticRating: item.CriticRating,
             IsFolder: item.IsFolder,
             Tagline: item.Tagline,
-            SortName: item.SortName
+            SortName: item.SortName,
+            RunTimeSeconds: item.RunTimeTicks.HasValue && item.RunTimeTicks.Value > 0
+                ? item.RunTimeTicks.Value / 10_000_000L
+                : null
         );
     }
 }

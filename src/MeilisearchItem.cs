@@ -1,4 +1,4 @@
-﻿namespace Jellyfin.Plugin.Meilisearch;
+namespace Jellyfin.Plugin.Meilisearch;
 
 public record MeilisearchItem(
     string Guid,
@@ -19,5 +19,6 @@ public record MeilisearchItem(
     double? CriticRating,
     string? Path,
     string? Tagline,
-    string? SortName
+    string? SortName,
+    long? RunTimeSeconds
 );
