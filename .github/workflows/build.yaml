@@ -43,3 +43,5 @@ jobs:
           retention-days: 30
           if-no-files-found: error
           path: ./artifacts/*.zip
+
+# Register workflow on maintained fork.
