@@ -8,4 +8,6 @@ bin/
 obj/
 .idea/
 *.user
-.vs/
+.vs//dist/
+
+/dist/
