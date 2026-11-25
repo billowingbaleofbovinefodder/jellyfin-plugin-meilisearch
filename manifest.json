@@ -9,6 +9,14 @@
         "imageUrl": "https://raw.githubusercontent.com/meilisearch/meilisearch/refs/heads/main/assets/meilisearch-logo-dark.svg",
         "versions": [
             {
+                "version": "1.12.1.1001",
+                "changelog": "\n- [691863b] Register workflows on maintained fork\n- [dd2bce2] Ignore local plugin distribution artifacts\n- [61a8e01] Add tag and runtime filters to Meilisearch search\n- [619cbe7] fix: follow-ups to indexing items as they change\n- [1604227] feat: index items as they are added or updated (#146)\n- [0cbfd94] fix: follow-ups to the configurable search timeout\n- [4e4a8f5] feat: configurable search timeout (#147)",
+                "targetAbi": "12.0.0.0",
+                "sourceUrl": "https://github.com/billowingbaleofbovinefodder/jellyfin-plugin-meilisearch/releases/download/1.12.1.1001/meilisearch_1.12.1.1001.zip",
+                "checksum": "10780c27f0ed4e80810e5226e4233bab",
+                "timestamp": "2026-11-25T12:35:23Z"
+            },
+            {
                 "version": "1.12.1.7",
                 "changelog": "\n- [7ddbf3a] feat: add a setting to search people by name only (#145)\n- [882fdfa] ci(deps): bump actions/setup-dotnet from 6.0.0 to 6.1.0 (#144)",
                 "targetAbi": "12.0.0.0",
